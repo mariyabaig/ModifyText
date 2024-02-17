@@ -1,48 +1,15 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "Your Chrome Extension Name",
     "version": "1.0",
     "description": "Description of your Chrome extension",
-    "icons": [
-        {
-            "src": "icon.png",
-            "sizes": "48x48",
-            "type": "image/png"
-        }
-    ],
     "action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "16": "icon.png",
-            "48": "icon.png",
-            "128": "icon.png"
-        }
+        "default_popup": "popup.html"
     },
     "permissions": [
         "activeTab"
     ],
-    "background": {
-        "service_worker": "background.js"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "content.js"
-            ]
-        }
-    ],
     "browser_action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "16": "icon.png",
-            "48": "icon.png",
-            "128": "icon.png"
-        }
-    },
-    "web_accessible_resources": [
-        "content.js"
-    ]
+        "default_popup": "popup.html"
+    }
 }
