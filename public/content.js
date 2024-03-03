@@ -5,6 +5,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
         // Extract text content from the screen
         const text = document.body.innerText;
         // Send the extracted text back to the popup script
-        chrome.runtime.sendMessage({ text: text });
+        sendResponse({ text: text });
     }
+    // Return true to indicate that sendResponse will be called asynchronously
+    return true;
 });

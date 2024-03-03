@@ -8,9 +8,15 @@ document.addEventListener("DOMContentLoaded", function () {
         tabs[0].id,
         { command: "grabText" },
         function (response) {
-          // Handle the response from the content script if needed
-          console.log("Text grabbed from the screen:", response.text);
-          // You can update the UI or perform further actions here
+          // Handle the response from the content script
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError.message);
+          } else if (response && response.text) {
+            console.log("Text grabbed from the screen:", response.text);
+            // You can update the UI or perform further actions here
+          } else {
+            console.error("Unexpected response:", response);
+          }
         }
       );
     });
