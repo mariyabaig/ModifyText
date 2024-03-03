@@ -2,68 +2,90 @@ import React, { useState } from "react";
 import { RxLetterCaseUppercase, RxLetterCaseLowercase, RxCopy, RxFontBold } from "react-icons/rx";
 import { GoItalic } from "react-icons/go";
 import { FaItalic } from "react-icons/fa";
-import { RxUnderline } from "react-icons/rx"
+import { RxUnderline } from "react-icons/rx";
+
 export default function Text(props) {
-  const [text, setText] = useState("");
+  const [text, setText] = useState("")
+  const [savedSelectionRange, setSavedSelectionRange] = useState(null)
 
   const handleClearClick = () => {
-    setText("");
-  };
+    setText("")
+ }
 
   const handleCopy = () => {
-    let textArea = document.getElementById("myText");
-    textArea.select();
-    navigator.clipboard.writeText(textArea.value);
-  };
+    let textArea = document.getElementById("myText")
+    textArea.select()
+    navigator.clipboard.writeText(textArea.value)
+ }
 
   const handleOnChange = (event) => {
-    setText(event.target.value);
-  };
+    setText(event.target.value)
+ }
+
+  const saveSelectionRange = () => {
+    const selection = window.getSelection()
+    if (selection.rangeCount > 0) {
+      setSavedSelectionRange(selection.getRangeAt(0).cloneRange())
+    }
+ }
+
+  const restoreSelectionRange = () => {
+    if (savedSelectionRange) {
+      const selection = window.getSelection()
+      selection.removeAllRanges()
+      selection.addRange(savedSelectionRange)
+    }
+ }
+
 
   const handleStyleChange = (style) => {
-    let textArea = document.getElementById("myText");
-    const selectionStart = textArea.selectionStart;
-    const selectionEnd = textArea.selectionEnd;
-    let selectedText = textArea.value.substring(selectionStart, selectionEnd);
-    let newText;
-
+    let div = document.getElementById("myText")
+    if (!div) {
+      console.error("Contenteditable div element not found.")
+      return
+    }
+  
+    saveSelectionRange()
+    
     switch (style) {
       case "upper":
-        newText = text.substring(0, selectionStart) + selectedText.toUpperCase() + text.substring(selectionEnd);
-        break;
+        document.execCommand("insertText", false, window.getSelection().toString().toUpperCase())
+        break
       case "lower":
-        newText = text.substring(0, selectionStart) + selectedText.toLowerCase() + text.substring(selectionEnd);
-        break;
+        document.execCommand("insertText", false, window.getSelection().toString().toLowerCase())
+        break
       case "bold":
-        newText = text.substring(0, selectionStart) + "<b>" + selectedText + "</b>" + text.substring(selectionEnd);
-        break;
+        document.execCommand("bold", false)
+        break
       case "italic":
-        newText = text.substring(0, selectionStart) + "<i>" + selectedText + "</i>" + text.substring(selectionEnd);
-        break;
+        document.execCommand("italic", false)
+        break
+        case "bolditalic":
+          document.execCommand("bold", false)
+          document.execCommand("italic", false)
+          break
       case "underline":
-        newText = text.substring(0, selectionStart) + "<u>" + selectedText + "</u>" + text.substring(selectionEnd);
-        break;
-      case "bolditalic":
-        newText = text.substring(0, selectionStart) + "<b><i>" + selectedText + "</i></b>" + text.substring(selectionEnd);
-        break;
+        document.execCommand("underline", false)
+        break
+
       default:
-        newText = text;
+        break
     }
-
-    setText(newText);
-  };
-
+  
+    restoreSelectionRange()
+ }
+  
   return (
     <>
       <div className="flex flex-col justify-center items-center text-2xl">
-        <textarea
-          className="w-3/4 border-2 border-gray-300 rounded-lg p-4 mb-4"
-          value={text}
-          onChange={handleOnChange}
+        <div
           id="myText"
-          rows="13"
-        ></textarea>
-
+          contentEditable
+          className="w-3/4 border-2 border-gray-300 rounded-lg p-4 mb-4"
+          style={{ minHeight: "150px", overflowY: "auto" }}
+          dangerouslySetInnerHTML={{ __html: text }}
+          onBlur={(e) => setText(e.target.innerHTML)}
+        ></div>
         <div className="flex flex-row space-x-4">
           <button
             type="button"
@@ -123,8 +145,7 @@ export default function Text(props) {
           </button>
         </div>
 
-        <p dangerouslySetInnerHTML={{ __html: text }}></p>
       </div>
     </>
-  );
+  )
 }
