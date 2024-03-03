@@ -4,10 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
   processButton.addEventListener("click", function () {
     // Send a message to the content script to grab text from the screen
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      console.log("Tabs:", tabs);
       chrome.tabs.sendMessage(
         tabs[0].id,
         { command: "grabText" },
         function (response) {
+          console.log("Response from content script:", response);
           // Handle the response from the content script
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError.message);
