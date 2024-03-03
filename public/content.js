@@ -1,19 +1,25 @@
 // Listen for messages from the popup script
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    console.log("Message received in content script:", message);
-    
-    // Check if the message contains the command to grab HTML content
-    if (message && message.command === "grabHTML") {
-        console.log("Command to grab HTML content received");
-
-        // Extract HTML content from the entire webpage
-        const htmlContent = document.documentElement.outerHTML;
-        
-        console.log("HTML content extracted from the webpage:", htmlContent);
-
-        // Send the HTML content back to the popup script
-        sendResponse({ htmlContent: htmlContent });
-    } else {
-        console.log("Unexpected message received:", message);
+    if (message.command === "checkAnyTextInputElement") {
+        // Check if any element on the page is a text input element
+        const hasTextInputElement = checkAnyTextInputElement();
+        // Send the result back to the popup script
+        sendResponse({ hasTextInputElement: hasTextInputElement });
     }
+    // Return true to indicate that sendResponse will be called asynchronously
+    return true;
 });
+
+// Function to check if any element on the page is a text input element
+function checkAnyTextInputElement() {
+    const allElements = document.getElementsByTagName('*');
+    for (let i = 0; i < allElements.length; i++) {
+        const element = allElements[i];
+        if (element.tagName === 'TEXTAREA' || (element.tagName === 'INPUT' && element.type === 'text')) {
+            console.log("Found a text input element:", element);
+            return true;
+        }
+    }
+    console.log("No text input element found on the page");
+    return false;
+}
